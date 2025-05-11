@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, StyleSheet, SafeAreaView, ActivityIndicator, Image, TextInput, FlatList } from 'react-native';
+import { View, Text, Button, StyleSheet, SafeAreaView, ActivityIndicator, Image, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
@@ -13,7 +12,6 @@ const WeatherToday = () => {
     const [error, setError] = useState(null);
     const [text, setText] = useState('Tel Aviv'); // ברירת מחדל: תל אביב
     const [query, setQuery] = useState('Tel Aviv'); // ברירת מחדל: תל אביב
-    const [filteredCities, setFilteredCities] = useState([]);
 
     const API_KEY = '2a80e6f45343093bc40b5ce047445df0'; 
 
@@ -38,21 +36,6 @@ const WeatherToday = () => {
         setQuery(text);
     };
 
-    const handleShowList = (t) => {
-        setText(t);
-        if (t) {
-            const filtered = cities.filter(city => city.toLowerCase().includes(t.toLowerCase()));
-            setFilteredCities(filtered);
-        } else {
-            setFilteredCities([]);
-        }
-    };
-
-    const handleSelectCity = (city) => {
-        setQuery(city);
-        setFilteredCities([]);
-    };
-
     if (loading) {
         return (
             <SafeAreaView style={styles.container}>
@@ -75,22 +58,13 @@ const WeatherToday = () => {
                 style={styles.input}
                 placeholder="הקלד שם עיר... "
                 value={text}
-
-                onChangeText={handleShowList}
+                onChangeText={setText} // עדכון ה-state של text
             />
             <Button
                 title='שנה עיר'
                 onPress={() => { handleSearch(text); }}
             />
-            <FlatList
-                data={filteredCities}
-                keyExtractor={(item) => item}
-                renderItem={({ item }) => (
-                    <Text style={styles.item} onPress={() => handleSelectCity(item)}>
-                        {item}1
-                    </Text>
-                )}
-            />
+           
             <Text style={styles.title}>מזג האוויר להיום</Text>
             <View style={styles.weatherContainer}>
                 <Text style={styles.city}>עיר: {weatherData.name}</Text>
@@ -181,15 +155,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         paddingHorizontal: 10,
         width: '100%',
-    },
-    item: {
-        padding: 10,
-        fontSize: 18,
-        backgroundColor: '#fff',
-        borderRadius: 5,
-        marginVertical: 5,
-        width: '100%',
-        textAlign: 'center',
     },
 });
 
